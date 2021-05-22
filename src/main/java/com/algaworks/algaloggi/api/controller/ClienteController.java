@@ -4,6 +4,7 @@ import java.util.List;
 import javax.validation.Valid;
 import com.algaworks.algaloggi.domain.model.Cliente;
 import com.algaworks.algaloggi.domain.repository.ClienteRepository;
+import com.algaworks.algaloggi.domain.service.CatalogoClienteService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,6 +24,7 @@ import lombok.AllArgsConstructor;
 public class ClienteController {
 
   private ClienteRepository repository;
+  private CatalogoClienteService catalogoClienteService;
 
   @GetMapping
   public List<Cliente> listar() {
@@ -46,7 +48,7 @@ public class ClienteController {
   @PostMapping
   @ResponseStatus(code = HttpStatus.CREATED)
   public Cliente adicionar(@Valid @RequestBody Cliente cliente) {
-    return repository.save(cliente);
+    return catalogoClienteService.salvar(cliente);
   }
 
   @PutMapping("/{clienteId}")
@@ -58,7 +60,7 @@ public class ClienteController {
     }
 
     cliente.setId(clienteId);
-    cliente = repository.save(cliente);
+    cliente = catalogoClienteService.salvar(cliente);
     return ResponseEntity.ok(cliente);
   }
 
@@ -68,7 +70,7 @@ public class ClienteController {
     if (!repository.existsById(clienteId))
       return ResponseEntity.notFound().build();
 
-    repository.deleteById(clienteId);
+    catalogoClienteService.excluir(clienteId);
 
     return ResponseEntity.noContent().build();
   }
