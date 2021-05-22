@@ -1,6 +1,7 @@
 package com.algaworks.algaloggi.api.controller;
 
 import java.util.List;
+import javax.validation.Valid;
 import com.algaworks.algaloggi.domain.model.Cliente;
 import com.algaworks.algaloggi.domain.repository.ClienteRepository;
 import org.springframework.http.HttpStatus;
@@ -35,19 +36,21 @@ public class ClienteController {
     // return ResponseEntity.notFound().build();
     // return ResponseEntity.ok(cliente.get());
 
-    return repository.findById(clienteId)
-        // .map(cliente -> ResponseEntity.ok(cliente))
-        .map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    // return repository.findById(clienteId).map(cliente -> ResponseEntity.ok(cliente))
+    // .orElse(ResponseEntity.notFound().build());
+
+    return repository.findById(clienteId).map(ResponseEntity::ok)
+        .orElse(ResponseEntity.notFound().build());
   }
 
   @PostMapping
   @ResponseStatus(code = HttpStatus.CREATED)
-  public Cliente adicionar(@RequestBody Cliente cliente) {
+  public Cliente adicionar(@Valid @RequestBody Cliente cliente) {
     return repository.save(cliente);
   }
 
   @PutMapping("/{clienteId}")
-  public ResponseEntity<Cliente> atualizar(@PathVariable Long clienteId,
+  public ResponseEntity<Cliente> atualizar(@Valid @PathVariable Long clienteId,
       @RequestBody Cliente cliente) {
 
     if (!repository.existsById(clienteId)) {
@@ -60,11 +63,13 @@ public class ClienteController {
   }
 
   @DeleteMapping("/{clienteId}")
-  public ResponseEntity<Void> remover(@PathVariable Long clienteId) {
+  public ResponseEntity<Void> remover(@Valid @PathVariable Long clienteId) {
+
     if (!repository.existsById(clienteId))
       return ResponseEntity.notFound().build();
 
     repository.deleteById(clienteId);
+
     return ResponseEntity.noContent().build();
   }
 }
