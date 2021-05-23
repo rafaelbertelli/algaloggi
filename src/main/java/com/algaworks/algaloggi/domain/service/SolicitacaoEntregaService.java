@@ -1,6 +1,6 @@
 package com.algaworks.algaloggi.domain.service;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import com.algaworks.algaloggi.domain.model.Cliente;
 import com.algaworks.algaloggi.domain.model.Entrega;
 import com.algaworks.algaloggi.domain.model.StatusEntrega;
@@ -23,7 +23,7 @@ public class SolicitacaoEntregaService {
 
     entrega.setCliente(cliente);
     entrega.setStatus(StatusEntrega.PENDENTE);
-    entrega.setDataPedido(LocalDateTime.now());
+    entrega.setDataPedido(OffsetDateTime.now());
 
     return entregaRepository.save(entrega);
   }
