@@ -3,6 +3,7 @@ package com.algaworks.algaloggi.api.exceptionhandler;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import com.algaworks.algaloggi.domain.exception.EntidadeNaoEncontradaException;
 import com.algaworks.algaloggi.domain.exception.NegocioException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -52,7 +53,19 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     problema.setTitulo(ex.getMessage());
 
     return handleExceptionInternal(ex, problema, new HttpHeaders(), status, request);
+  }
 
+  @ExceptionHandler(EntidadeNaoEncontradaException.class)
+  public ResponseEntity<Object> handleEntidadeNaoEncontrada(EntidadeNaoEncontradaException ex,
+      WebRequest request) {
+    HttpStatus status = HttpStatus.NOT_FOUND;
+
+    Problema problema = new Problema();
+    problema.setStatus(status.value());
+    problema.setDataHora(OffsetDateTime.now());
+    problema.setTitulo(ex.getMessage());
+
+    return handleExceptionInternal(ex, problema, new HttpHeaders(), status, request);
   }
 
 }
