@@ -19,6 +19,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.groups.ConvertGroup;
 import javax.validation.groups.Default;
 import com.algaworks.algaloggi.domain.ValidationGroups;
+import com.algaworks.algaloggi.domain.exception.NegocioException;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -67,6 +68,20 @@ public class Entrega {
     this.getOcorrencias().add(ocorrencia);
 
     return ocorrencia;
+  }
+
+  public void finalizar() {
+
+    if (!podeSerFinalizada()) {
+      throw new NegocioException("Entrega não pode ser finalizada");
+    }
+
+    setStatus(StatusEntrega.FINALIZADA);
+    setDataFinalizacao(OffsetDateTime.now());
+  }
+
+  public boolean podeSerFinalizada() {
+    return StatusEntrega.PENDENTE.equals(getStatus());
   }
 
 }

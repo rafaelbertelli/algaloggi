@@ -7,12 +7,14 @@ import com.algaworks.algaloggi.api.model.EntregaModel;
 import com.algaworks.algaloggi.api.model.input.EntregaInput;
 import com.algaworks.algaloggi.domain.model.Entrega;
 import com.algaworks.algaloggi.domain.repository.EntregaRepository;
+import com.algaworks.algaloggi.domain.service.FinalizacaoEntregaService;
 import com.algaworks.algaloggi.domain.service.SolicitacaoEntregaService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -27,6 +29,7 @@ public class EntregaController {
   private SolicitacaoEntregaService solicitacaoEntregaService;
   private EntregaRepository entregaRepository;
   private EntregaMapper entregaMapper;
+  private FinalizacaoEntregaService finalizacaoEntregaService;
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
@@ -47,6 +50,12 @@ public class EntregaController {
     return entregaRepository.findById(entregaId)
         .map(entrega -> ResponseEntity.ok(entregaMapper.toModel(entrega)))
         .orElse(ResponseEntity.notFound().build());
+  }
+
+  @PutMapping("/{entregaId}/finalizacao")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void finalizar(@PathVariable Long entregaId) {
+    finalizacaoEntregaService.finalizar(entregaId);
   }
 
 }
