@@ -2,6 +2,9 @@ package com.algaworks.algaloggi.api.controller;
 
 import java.util.List;
 import javax.validation.Valid;
+import com.algaworks.algaloggi.api.mapper.EntregaMapper;
+import com.algaworks.algaloggi.api.model.EntregaModel;
+import com.algaworks.algaloggi.api.model.input.EntregaInput;
 import com.algaworks.algaloggi.domain.model.Entrega;
 import com.algaworks.algaloggi.domain.repository.EntregaRepository;
 import com.algaworks.algaloggi.domain.service.SolicitacaoEntregaService;
@@ -23,21 +26,26 @@ public class EntregaController {
 
   private SolicitacaoEntregaService solicitacaoEntregaService;
   private EntregaRepository entregaRepository;
+  private EntregaMapper entregaMapper;
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public Entrega solicitar(@Valid @RequestBody Entrega entrega) {
-    return solicitacaoEntregaService.solicitar(entrega);
+  public EntregaModel solicitar(@Valid @RequestBody EntregaInput entregaInput) {
+    Entrega novaEntrega = entregaMapper.toEntity(entregaInput);
+    Entrega entregaSolicitada = solicitacaoEntregaService.solicitar(novaEntrega);
+    return entregaMapper.toModel(entregaSolicitada);
   }
 
   @GetMapping
-  public List<Entrega> listar() {
-    return entregaRepository.findAll();
+  public List<EntregaModel> listar() {
+    List<Entrega> listaSolicitada = entregaRepository.findAll();
+    return entregaMapper.toCollectionModel(listaSolicitada);
   }
 
   @GetMapping("/{entregaId}")
-  public ResponseEntity<Entrega> buscar(@PathVariable Long entregaId) {
-    return entregaRepository.findById(entregaId).map(ResponseEntity::ok)
+  public ResponseEntity<EntregaModel> buscar(@PathVariable Long entregaId) {
+    return entregaRepository.findById(entregaId)
+        .map(entrega -> ResponseEntity.ok(entregaMapper.toModel(entrega)))
         .orElse(ResponseEntity.notFound().build());
   }
 
